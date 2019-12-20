@@ -83,18 +83,18 @@ struct Category {
     /// Balance in milliunits format.
     balance: i64,
     /// The category goal if any.
-    goal_type: Option<Goal>,
+    goal: Option<Goal>,
 }
 
 struct Goal {
-    goal_type: GoalType,
+    kind: GoalKind,
     // FIXME(feroldi): this should be a proper date type, such as chrono::Date.
     creation_month: String,
 }
 
 // TODO(feroldi): each of these goal types has some attributes to it, such as
 // target balance or date. Find out which ones are still missing.
-enum GoalType {
+enum GoalKind {
     TargetCategoryBalance {
         target_balance: i64,
     },
