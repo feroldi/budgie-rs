@@ -1,3 +1,5 @@
+use chrono::{Date, Utc};
+
 /// The date format setting for the budget.
 struct DateFormat(String);
 
@@ -88,8 +90,7 @@ struct Category {
 
 struct Goal {
     kind: GoalKind,
-    // FIXME(feroldi): this should be a proper date type, such as chrono::Date.
-    creation_month: String,
+    creation_month: Date<Utc>,
 }
 
 // TODO(feroldi): each of these goal types has some attributes to it, such as
@@ -100,8 +101,7 @@ enum GoalKind {
     },
     TargetCategoryBalanceByDate {
         target_balance: i64,
-        // FIXME(feroldi): this should be a proper date type, such as chrono::Date.
-        target_date: String,
+        target_date: Date<Utc>,
     },
     MonthlyFunding {
         funding_balance: i64,
@@ -120,8 +120,7 @@ struct CategoryGroupId(usize);
 struct CategoryId(usize);
 
 struct Transaction {
-    // FIXME(feroldi): this should be a proper date type, such as chrono::Date.
-    date: String,
+    date: Date<Utc>,
     /// The transaction amount in milliunits format.
     amount: i64,
     account: AccountId,
@@ -142,17 +141,32 @@ enum ClearedStatus {
 
 struct Budget {
     name: String,
-    // FIXME(feroldi): this should be a proper date type, such as chrono::Date.
-    first_month: String,
-    // FIXME(feroldi): this should be a proper date type, such as chrono::Date.
-    last_month: String,
+    first_month: Date<Utc>,
+    last_month: Date<Utc>,
     settings: BudgetSettings,
     accounts: Vec<Account>,
     payees: Vec<Payee>,
     category_groups: Vec<CategoryGroup>,
     categories: Vec<Category>,
-    // TODO(feroldi): months
+    months: Vec<Month>,
     transactions: Vec<Transaction>,
+}
+
+struct Month {
+    month: Date<Utc>,
+    note: String,
+    /// The total amount in transactions categorized to 'Inflow: To be Budgeted' in the month.
+    income: i64,
+    /// The total amount budgeted in the month.
+    budgeted: i64,
+    /// The total amount in transactions in the month, excluding those categorized to 'Inflow: To be Budgeted'.
+    activity: i64,
+    /// The available amount for 'To be Budgeted'.
+    to_be_budgeted: i64,
+    /// The Age of Money as of the month.
+    age_of_money: i64,
+    /// Whether or not the month has been deleted.
+    is_deleted: bool,
 }
 
 fn main() {
