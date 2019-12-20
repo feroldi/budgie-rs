@@ -69,10 +69,10 @@ struct CategoryGroup {
     name: String,
     is_hidden: bool,
     is_deleted: bool,
-    categories: Vec<Category>,
 }
 
 struct Category {
+    category_group: CategoryGroupId,
     name: String,
     is_hidden: bool,
     note: String,
@@ -117,16 +117,18 @@ struct Payee {
 struct AccountId(usize);
 struct PayeeId(usize);
 struct CategoryGroupId(usize);
-struct CategoryId(CategoryGroupId, usize);
+struct CategoryId(usize);
 
 struct Transaction {
-    account: AccountId,
     // FIXME(feroldi): this should be a proper date type, such as chrono::Date.
     date: String,
     /// The transaction amount in milliunits format.
     amount: i64,
+    account: AccountId,
     payee: PayeeId,
     category: CategoryId,
+    transfer_account: Option<AccountId>,
+    memo: String,
     cleared: ClearedStatus,
     approved: bool,
     flag_color: String,
@@ -136,6 +138,21 @@ enum ClearedStatus {
     Cleared,
     Uncleared,
     Reconciled,
+}
+
+struct Budget {
+    name: String,
+    // FIXME(feroldi): this should be a proper date type, such as chrono::Date.
+    first_month: String,
+    // FIXME(feroldi): this should be a proper date type, such as chrono::Date.
+    last_month: String,
+    settings: BudgetSettings,
+    accounts: Vec<Account>,
+    payees: Vec<Payee>,
+    category_groups: Vec<CategoryGroup>,
+    categories: Vec<Category>,
+    // TODO(feroldi): months
+    transactions: Vec<Transaction>,
 }
 
 fn main() {
